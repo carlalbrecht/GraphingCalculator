@@ -19,6 +19,10 @@ public class Sidebar extends JPanel {
         EquationEditor editor = new EquationEditor(0, width);
         this.add(editor);
         this.editors.add(editor);
+
+        EquationEditor editor_test = new EquationEditor(1, width);
+        this.add(editor_test);
+        this.editors.add(editor_test);
     }
 
     @Override
