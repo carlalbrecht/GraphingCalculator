@@ -1,7 +1,11 @@
 package org.gcalc;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class EquationEditor extends JPanel {
     private int id, width;
@@ -18,6 +22,19 @@ public class EquationEditor extends JPanel {
         this.editor = new JTextField();
         this.editor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         this.editor.setFont(new Font("monospaced", Font.PLAIN, 16));
+        this.editor.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                EquationEditor.this.equationChanged();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                EquationEditor.this.equationChanged();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                EquationEditor.this.equationChanged();
+            }
+        });
         this.add(this.editor);
 
         // Make odd rows darker
@@ -29,6 +46,14 @@ public class EquationEditor extends JPanel {
 
     public int getID() {
         return this.id;
+    }
+
+    /**
+     * Triggers processing of a new equation when the equation field is
+     * modified.
+     */
+    protected void equationChanged() {
+        System.out.println("modified");
     }
 
     /**

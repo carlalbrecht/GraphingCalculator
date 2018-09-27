@@ -46,19 +46,30 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
      * Signals that a new equation has been created. A reference to the new
      * equation is supplied.
      *
+     * @param id The array index of the new equation
      * @param newEquation The newly added equation
      */
-    public void equationAdded(Equation newEquation) {
+    public void equationAdded(int id, Equation newEquation) {
 
     }
 
     /**
-     * Called when one or more equations have been removed. An array containing
-     * all remaining equations is supplied.
+     * Called when one or more equations have been removed.
      *
-     * @param remaining The remaining equations after the delete operation
+     * @param id The array index of the removed equation
      */
-    public void equationRemoved(Equation[] remaining) {
+    public void equationRemoved(int id) {
+
+    }
+
+    /**
+     * Called when a pre-existing equation has been modified. Note that the new
+     * equation instance may be the same instance as the previous instance.
+     * 
+     * @param id The array index of the modified equation
+     * @param e The equation object to replace the old one with
+     */
+    public void equationChanged(int id, Equation e) {
 
     }
 
