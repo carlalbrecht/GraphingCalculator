@@ -1,10 +1,15 @@
 package org.gcalc;
 
+import com.bulenkov.darcula.DarculaLaf;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GraphWindow extends JFrame {
-    public GraphWindow() {
+    public GraphWindow() throws Exception {
+        UIManager.setLookAndFeel(new DarculaLaf().getClass().getName());
+
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Graphing Calculator");
 
         Container pane = this.getContentPane();
@@ -20,6 +25,11 @@ public class GraphWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        new GraphWindow();
+        try {
+            new GraphWindow();
+        } catch (Exception e) {
+            System.err.println("Failed to create graph window.");
+            System.exit(1);
+        }
     }
 }
