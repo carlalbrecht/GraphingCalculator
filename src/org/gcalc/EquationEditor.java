@@ -4,23 +4,32 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class EquationEditor extends JPanel {
     private int id, width;
 
+    private JLabel title;
+    private JButton deleteBtn;
     private JTextField editor;
 
     public EquationEditor(int id, int width) {
         this.id = id;
         this.width = width;
 
-        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        this.setPreferredSize(new Dimension(width, 50));
 
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.setPreferredSize(new Dimension(width, 92));
+
+        // Create editor title
+        JPanel titleRow = new JPanel();
+        titleRow.setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.title = new JLabel("Expression " + Integer.toString(id + 1));
+        titleRow.add(this.title);
+        this.add(titleRow);
+
+        // Create expression editor
         this.editor = new JTextField();
-        this.editor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        this.editor.setMaximumSize(new Dimension(width - 10, 30));
         this.editor.setFont(new Font("monospaced", Font.PLAIN, 16));
         this.editor.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
@@ -37,10 +46,24 @@ public class EquationEditor extends JPanel {
         });
         this.add(this.editor);
 
+        // Line up buttons on bottom row
+        JPanel buttonRow = new JPanel();
+        buttonRow.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        // Create button to remove the expression
+        this.deleteBtn = new JButton("Delete");
+        buttonRow.add(this.deleteBtn);
+
+        this.add(buttonRow);
+
         // Make odd rows darker
         if (id % 2 == 1) {
             darkenComponent(this);
+            darkenComponent(titleRow);
+            darkenComponent(this.title);
             darkenComponent(this.editor);
+            darkenComponent(buttonRow);
+            darkenComponent(this.deleteBtn);
         }
     }
 
@@ -57,7 +80,7 @@ public class EquationEditor extends JPanel {
     }
 
     /**
-     * Lowers the background HSB's brightness by 5%.
+     * Lowers the background HSB's brightness by 3.5%.
      *
      * @param c The component to darken
      */
@@ -69,6 +92,6 @@ public class EquationEditor extends JPanel {
                 origColour.getBlue(),
                 null);
         c.setBackground(new Color(
-                Color.HSBtoRGB(hsv[0], hsv[1], hsv[2] - (float) 0.05)));
+                Color.HSBtoRGB(hsv[0], hsv[1], hsv[2] - (float) 0.035)));
     }
 }
