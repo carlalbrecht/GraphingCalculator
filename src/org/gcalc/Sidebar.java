@@ -6,11 +6,24 @@ import java.util.ArrayList;
 
 public class Sidebar extends JPanel {
     private ArrayList<EquationListener> listeners = new ArrayList();
+    private ArrayList<EquationEditor> editors = new ArrayList();
+
+    int width, height;
 
     public Sidebar(int width, int height) {
         this.setPreferredSize(new Dimension(width, height));
+        this.width = width;
+        this.height = height;
 
-        this.add(new EquationEditor());
+        // Create initial equation editor
+        EquationEditor editor = new EquationEditor(0, width);
+        this.add(editor);
+        this.editors.add(editor);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(this.width, this.height);
     }
 
     /**
