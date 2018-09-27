@@ -7,8 +7,10 @@ import java.awt.*;
 
 public class GraphWindow extends JFrame {
     public GraphWindow() throws Exception {
-        UIManager.setLookAndFeel(new DarculaLaf().getClass().getName());
+        // Set Darcula as UI theme
+        UIManager.setLookAndFeel(DarculaLaf.class.getName());
 
+        // Set window properties
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Graphing Calculator");
 
@@ -16,9 +18,17 @@ public class GraphWindow extends JFrame {
         pane.setPreferredSize(new Dimension(1024, 600));
         pane.setMinimumSize(new Dimension(800, 600));
 
-        pane.add(new Sidebar(300, 600), BorderLayout.LINE_START);
-        pane.add(new Graph(1024 - 300, 600), BorderLayout.CENTER);
+        // Inner elements
+        Graph graph = new Graph(1024-300, 600);
+        Sidebar sidebar = new Sidebar(300, 600);
 
+        // Capture equation create / delete events
+        sidebar.addEquationListener(graph);
+
+        pane.add(sidebar, BorderLayout.LINE_START);
+        pane.add(graph, BorderLayout.CENTER);
+
+        // Display window
         this.pack();
         this.setResizable(true);
         this.setVisible(true);
@@ -26,6 +36,7 @@ public class GraphWindow extends JFrame {
 
     public static void main(String[] args) {
         try {
+            // Create root window instance, or just give up
             new GraphWindow();
         } catch (Exception e) {
             System.err.println("Failed to create graph window.");
