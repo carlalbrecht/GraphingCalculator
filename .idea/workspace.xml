@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="28a69aed-613d-4c7c-8a51-75776de84930" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/org/gcalc/Equation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/org/gcalc/Graph.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/org/gcalc/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/org/gcalc/Sidebar.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/org/gcalc/EquationEditor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GraphingCalculator/org/gcalc/Equation.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GraphingCalculator/org/gcalc/Equation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GraphingCalculator/org/gcalc/Graph.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/GraphingCalculator/org/gcalc/Graph.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/GraphingCalculator/org/gcalc/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/gcalc/Equation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/gcalc/Equation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/gcalc/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/gcalc/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/org/gcalc/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/org/gcalc/GraphWindow.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,35 +29,39 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="4" />
+          <entry key="java" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="4" />
+          <entry key="JAVA" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="2294" />
+          <entry key="dummy" value="29" />
+          <entry key="java" value="2975" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="2294" />
+          <entry key="JAVA" value="2975" />
+          <entry key="PLAIN_TEXT" value="29" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/org/gcalc/Main.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/org/gcalc/GraphWindow.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="66" lean-forward="true" selection-start-line="14" selection-start-column="66" selection-end-line="14" selection-end-column="66" />
+            <state relative-caret-position="375">
+              <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#605#606#0" expanded="true" />
+                <element signature="e#636#637#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -63,21 +70,21 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/gcalc/Equation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+            <state relative-caret-position="405">
+              <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
               <folding>
-                <element signature="e#573#574#0" expanded="true" />
-                <element signature="e#592#593#0" expanded="true" />
+                <element signature="e#648#649#0" expanded="true" />
+                <element signature="e#675#676#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/org/gcalc/Graph.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="502">
-              <caret line="40" column="52" selection-start-line="40" selection-start-column="52" selection-end-line="40" selection-end-column="52" />
+            <state relative-caret-position="322">
+              <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#400#401#0" expanded="true" />
@@ -91,12 +98,21 @@
         <entry file="file://$PROJECT_DIR$/src/org/gcalc/Sidebar.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="75">
-              <caret line="5" column="35" selection-start-line="5" selection-start-column="35" selection-end-line="5" selection-end-column="35" />
+              <caret line="5" column="37" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#123#124#0" expanded="true" />
                 <element signature="e#140#141#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/org/gcalc/EquationEditor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" selection-start-line="6" selection-end-line="6" />
             </state>
           </provider>
         </entry>
@@ -116,10 +132,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/org/gcalc/Equation.java" />
         <option value="$PROJECT_DIR$/src/org/gcalc/Main.java" />
-        <option value="$PROJECT_DIR$/src/org/gcalc/Sidebar.java" />
+        <option value="$PROJECT_DIR$/src/org/gcalc/Equation.java" />
         <option value="$PROJECT_DIR$/src/org/gcalc/Graph.java" />
+        <option value="$PROJECT_DIR$/src/org/gcalc/Sidebar.java" />
+        <option value="$PROJECT_DIR$/src/org/gcalc/EquationEditor.java" />
+        <option value="$PROJECT_DIR$/src/org/gcalc/MainWindow.java" />
+        <option value="$PROJECT_DIR$/src/org/gcalc/GraphWindow.java" />
       </list>
     </option>
   </component>
@@ -162,7 +181,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1538024419863" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1538026420796" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -177,8 +196,8 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.gcalc.Main" />
+    <configuration name="GraphWindow" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.gcalc.GraphWindow" />
       <module name="GraphingCalculator" />
       <extension name="coverage">
         <pattern>
@@ -192,7 +211,7 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.GraphWindow" />
       </list>
     </recent_temporary>
   </component>
@@ -218,7 +237,7 @@
       <window_info id="UI Designer" />
       <window_info id="Capture Tool" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24944812" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24944812" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" weight="0.32896176" />
       <window_info anchor="bottom" id="Terminal" weight="0.32896176" />
@@ -226,7 +245,7 @@
       <window_info anchor="bottom" id="Messages" weight="0.32896176" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32896176" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32896176" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -247,21 +266,11 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/org/gcalc/Equation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+        <state relative-caret-position="405">
+          <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
           <folding>
-            <element signature="e#573#574#0" expanded="true" />
-            <element signature="e#592#593#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/org/gcalc/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="66" lean-forward="true" selection-start-line="14" selection-start-column="66" selection-end-line="14" selection-end-column="66" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#648#649#0" expanded="true" />
+            <element signature="e#675#676#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -269,7 +278,7 @@
     <entry file="file://$PROJECT_DIR$/src/org/gcalc/Sidebar.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
-          <caret line="5" column="35" selection-start-line="5" selection-start-column="35" selection-end-line="5" selection-end-column="35" />
+          <caret line="5" column="37" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#123#124#0" expanded="true" />
@@ -280,12 +289,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/org/gcalc/Graph.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="40" column="52" selection-start-line="40" selection-start-column="52" selection-end-line="40" selection-end-column="52" />
+        <state relative-caret-position="322">
+          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#400#401#0" expanded="true" />
             <element signature="e#430#431#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/gcalc/EquationEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/org/gcalc/GraphWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#605#606#0" expanded="true" />
+            <element signature="e#636#637#0" expanded="true" />
           </folding>
         </state>
       </provider>

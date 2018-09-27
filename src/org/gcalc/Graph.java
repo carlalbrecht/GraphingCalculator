@@ -33,10 +33,16 @@ public class Graph extends JLabel implements ComponentListener {
         this.img = new BufferedImage(
                 this.width, this.height, BufferedImage.TYPE_INT_RGB);
         this.setIcon(new ImageIcon(this.img));
+
+        this.redraw();
     }
 
     // Unused component listeners
     public void componentHidden(ComponentEvent e) { }
     public void componentMoved(ComponentEvent e) { }
     public void componentShown(ComponentEvent e) { }
+
+    protected void redraw() {
+        
+    }
 }
