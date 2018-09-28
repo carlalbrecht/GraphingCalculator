@@ -20,13 +20,18 @@ public class GraphWindow extends JFrame {
 
         // Inner elements
         Graph graph = new Graph(1024-300, 600);
+        graph.setMinimumSize(new Dimension(1024 - 400, 0));
+
         Sidebar sidebar = new Sidebar(300, 600);
+        sidebar.setMinimumSize(new Dimension(200, 0));
 
         // Capture equation create / delete events
         sidebar.addEquationListener(graph);
 
-        pane.add(sidebar, BorderLayout.LINE_START);
-        pane.add(graph, BorderLayout.CENTER);
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                                          sidebar, graph);
+        split.setDividerLocation(300);
+        pane.add(split, BorderLayout.CENTER);
 
         // Display window
         this.pack();
@@ -39,7 +44,8 @@ public class GraphWindow extends JFrame {
             // Create root window instance, or just give up
             new GraphWindow();
         } catch (Exception e) {
-            System.err.println("Failed to create graph window.");
+            System.err.println("Failed to create graph window. Exception:\n");
+            System.err.println(e.toString());
             System.exit(1);
         }
     }

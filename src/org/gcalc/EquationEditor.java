@@ -12,13 +12,10 @@ public class EquationEditor extends JPanel {
     private JButton deleteBtn;
     private JTextField editor;
 
-    public EquationEditor(int id, int width) {
+    public EquationEditor(int id) {
         this.id = id;
-        this.width = width;
-
 
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        this.setPreferredSize(new Dimension(width, 92));
 
         // Create editor title
         JPanel titleRow = new JPanel();
@@ -29,7 +26,6 @@ public class EquationEditor extends JPanel {
 
         // Create expression editor
         this.editor = new JTextField();
-        this.editor.setMaximumSize(new Dimension(width - 10, 30));
         this.editor.setFont(new Font("monospaced", Font.PLAIN, 16));
         this.editor.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
@@ -69,6 +65,16 @@ public class EquationEditor extends JPanel {
 
     public int getID() {
         return this.id;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+        this.setPreferredSize(new Dimension(width, 92));
+        this.setMaximumSize(new Dimension(width, 92));
+        this.editor.setMaximumSize(new Dimension(width - 10, 30));
+
+        this.revalidate();
+        this.repaint();
     }
 
     /**
