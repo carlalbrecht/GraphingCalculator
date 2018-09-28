@@ -17,6 +17,7 @@ public class Sidebar extends JScrollPane implements ComponentListener {
     public Sidebar(int width, int height) {
         super(new JPanel());
         this.setPreferredSize(new Dimension(width, height));
+        this.getVerticalScrollBar().setUnitIncrement(16);
         this.width = width;
         this.height = height;
 
@@ -31,9 +32,11 @@ public class Sidebar extends JScrollPane implements ComponentListener {
         this.container.add(editor);
         this.editors.add(editor);
 
-        EquationEditor editor_test = new EquationEditor(1);
-        this.container.add(editor_test);
-        this.editors.add(editor_test);
+        for (int i = 1; i < 10; i++) {
+            EquationEditor e = new EquationEditor(i);
+            this.container.add(e);
+            this.editors.add(e);
+        }
 
         this.addComponentListener(this);
     }
@@ -44,8 +47,7 @@ public class Sidebar extends JScrollPane implements ComponentListener {
     }
 
     public void componentResized(ComponentEvent componentEvent) {
-        Dimension size = this.getSize();
-        size.width -= 3;
+        Dimension size = this.getViewport().getSize();
         this.container.setMaximumSize(new Dimension(size.width, Integer.MAX_VALUE));
         for (EquationEditor e : this.editors) {
             e.setWidth(size.width);
