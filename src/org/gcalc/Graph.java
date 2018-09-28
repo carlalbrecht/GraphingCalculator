@@ -7,6 +7,16 @@ import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
 public class Graph extends JLabel implements ComponentListener, EquationListener {
+    public static final Color[] lineColours = {
+            new Color(231, 76, 60),
+            new Color(26, 188, 156),
+            new Color(241, 196, 15),
+            new Color(211, 84, 0),
+            new Color(39, 174, 96),
+            new Color(41, 128, 185),
+            new Color(255, 0, 255)
+    };
+
     private int width, height;
     private BufferedImage img;
 

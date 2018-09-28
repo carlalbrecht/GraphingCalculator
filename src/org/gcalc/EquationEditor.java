@@ -21,6 +21,7 @@ public class EquationEditor extends JPanel {
         JPanel titleRow = new JPanel();
         titleRow.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.title = new JLabel("Expression " + Integer.toString(id + 1));
+        this.title.setForeground(Graph.lineColours[id % Graph.lineColours.length]);
         titleRow.add(this.title);
         this.add(titleRow);
 

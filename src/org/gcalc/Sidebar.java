@@ -32,12 +32,7 @@ public class Sidebar extends JScrollPane implements ComponentListener {
         this.container.add(editor);
         this.editors.add(editor);
 
-        for (int i = 1; i < 10; i++) {
-            EquationEditor e = new EquationEditor(i);
-            this.container.add(e);
-            this.editors.add(e);
-        }
-
+        this.container.addComponentListener(this);
         this.addComponentListener(this);
     }
 
@@ -58,6 +53,32 @@ public class Sidebar extends JScrollPane implements ComponentListener {
     public void componentMoved(ComponentEvent componentEvent) { }
     public void componentShown(ComponentEvent componentEvent) { }
     public void componentHidden(ComponentEvent componentEvent) { }
+
+    /**
+     * Triggers the creation of a new, blank equation, and the callback of all
+     * EquationListeners once the equation has been created
+     */
+    public void newEquation() {
+        int id = this.editors.size();
+        EquationEditor e = new EquationEditor(id);
+        this.container.add(e);
+        this.editors.add(e);
+
+        // Update width of all equation editors
+        int width = this.getViewport().getSize().width;
+        for (EquationEditor f : this.editors) {
+            f.setWidth(width);
+        }
+
+        // Redraw sidebar
+        this.revalidate();
+        this.repaint();
+
+        // Notify listeners that a new equation has been added
+        for (EquationListener l : this.listeners) {
+            // TODO l.equationAdded(id, e);
+        }
+    }
 
     /**
      * Adds a new listener which will receive events when equations are
