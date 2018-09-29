@@ -132,7 +132,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
         Graphics2D g = this.img.createGraphics();
 
         g.setBackground(Color.BLACK);
-        g.clearRect(0, 0, this.img.getWidth(), this.img.getHeight());
+        g.setColor(Color.BLACK);
+        g.fill(new Rectangle2D.Double(0, 0, this.img.getWidth(), this.img.getHeight()));
 
         drawGrid(g);
 
@@ -149,8 +150,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
             g.setColor(lineColours[0]);
             g.setStroke(new BasicStroke(2));
-            g.draw(new Line2D.Double(drawX - 1, this.img.getHeight() / 2 - lastVal * (normInterval * this.scale),
-                    drawX, this.img.getHeight() / 2 - Math.sin(x) * (normInterval * this.scale)));
+            g.draw(new Line2D.Double(drawX - 1, this.img.getHeight() / 2.0 - lastVal * (normInterval * this.scale),
+                    drawX, this.img.getHeight() / 2.0 - Math.sin(x) * (normInterval * this.scale)));
             lastVal = Math.sin(x);
             drawX++;
         }
