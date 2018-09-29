@@ -8,6 +8,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Graph extends JLabel implements ComponentListener, EquationListener {
     public static final Color[] lineColours = {
@@ -22,6 +23,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
     private int width, height;
     private BufferedImage img;
+    private double scale = 1;
+    private ArrayList<Equation> equations = new ArrayList<>();
 
     public Graph(int width, int height) {
         this.width = width;
@@ -87,6 +90,38 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
     }
 
     /**
+     * Zooms in the graph a bit.
+     */
+    public void increaseScale() {
+        this.setScale(this.getScale() * 1.5);
+    }
+
+    /**
+     * Zooms out the graph a bit
+     */
+    public void decreaseScale() {
+        this.setScale(this.getScale() / 1.5);
+    }
+
+    /**
+     * Sets the zoom level of the graph. Automatically triggers a redraw of the
+     * graph.
+     *
+     * @param scale Scale multiplier (i.e. 1 = no zoom)
+     */
+    public void setScale(double scale) {
+        this.scale = scale;
+        this.redraw();
+    }
+
+    /**
+     * Returns the current scale multiplier in use by the graph.
+     */
+    public double getScale() {
+        return this.scale;
+    }
+
+    /**
      * Called when the BufferedImage contents are stale and need updating, such
      * as when the window has been resized, or an equation has been added /
      * removed.
@@ -98,6 +133,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
         g.clearRect(0, 0, this.img.getWidth(), this.img.getHeight());
 
         drawGrid(g);
+
+        this.repaint();
     }
 
     /**
@@ -105,6 +142,9 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
      * axis. Draws numbers for each perpendicular dashed line.
      */
     protected void drawGrid(Graphics2D g) {
+        float[] dashPattern = new float[]{10 * (float) this.scale,
+                                          5 * (float) this.scale};
+
         g.setColor(new Color(48, 48, 48));
 
         // Axis lines
@@ -118,10 +158,15 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
         // X axis vertical lines & numbers
         g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10,
-                                    new float[]{10, 5}, (29 - (imgHeight % 30)) / 2.0f + 20));
+                                    dashPattern, (29 - (imgHeight % 30)) / 2.0f + 20));
 
-        int xInterval = 50;
-        int xNumInterval = 1, xCurrent = 0;
+        // Janky code to scale interval between perpendicular lines
+        final int xNormInterval = 50;
+        int xScaledInt = (int) Math.round(50 * this.scale);
+        int xMultiplier = Math.max(Math.round((float) xNormInterval / (float) xScaledInt), 1);
+
+        int xInterval = xMultiplier * xScaledInt;
+        int xNumInterval = xMultiplier, xCurrent = 0;
         for (int x = imgWidth / 2 - xInterval; x >= 0; x -= xInterval) {
             g.draw(new Line2D.Double(x, imgHeight, x, 0));
             g.draw(new Line2D.Double(imgWidth - x, imgHeight, imgWidth - x, 0));
@@ -133,10 +178,10 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
         // Y axis horizontal lines & numbers
         g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10,
-                                    new float[]{10, 5}, (29 - (imgWidth % 30)) / 2.0f + 20));
+                                    dashPattern, (29 - (imgWidth % 30)) / 2.0f + 20));
 
-        int yInterval = 50;
-        int yNumInterval = 1, yCurrent = 0;
+        int yInterval = xInterval;
+        int yNumInterval = xNumInterval, yCurrent = 0;
         for (int y = imgHeight / 2 - yInterval; y >= 0; y -= yInterval) {
             g.draw(new Line2D.Double(imgWidth, y, 0, y));
             g.draw(new Line2D.Double(imgWidth, imgHeight - y, 0, imgHeight - y));

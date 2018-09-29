@@ -7,8 +7,8 @@ import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 public class Sidebar extends JScrollPane implements ComponentListener {
-    private ArrayList<EquationListener> listeners = new ArrayList();
-    private ArrayList<EquationEditor> editors = new ArrayList();
+    private ArrayList<EquationListener> listeners = new ArrayList<>();
+    private ArrayList<EquationEditor> editors = new ArrayList<>();
 
     int width, height;
 

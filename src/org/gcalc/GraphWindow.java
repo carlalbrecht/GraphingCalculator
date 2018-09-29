@@ -13,7 +13,7 @@ public class GraphWindow extends JFrame implements ActionListener {
     private Graph graph;
     private Sidebar sidebar;
 
-    private JMenuItem createNew, deleteAll;
+    private JMenuItem createNew, deleteAll, zoomIn, zoomOut, zoomReset;
 
     public GraphWindow() throws Exception {
         // Set Darcula as UI theme
@@ -55,6 +55,9 @@ public class GraphWindow extends JFrame implements ActionListener {
     }
 
     private void createMenuBar(JMenuBar menubar) {
+        /*
+         * Expressions menu
+         */
         JMenu exprMenu = new JMenu("Expressions");
         exprMenu.setMnemonic(KeyEvent.VK_X);
         exprMenu.getAccessibleContext().setAccessibleDescription(
@@ -78,11 +81,52 @@ public class GraphWindow extends JFrame implements ActionListener {
         this.deleteAll.getAccessibleContext().setAccessibleDescription(
                 "Deletes all existing expressions");
         exprMenu.add(this.deleteAll);
+
+        /*
+         * View menu
+         */
+        JMenu viewMenu = new JMenu("View");
+        viewMenu.setMnemonic(KeyEvent.VK_V);
+        viewMenu.getAccessibleContext().setAccessibleDescription(
+                "Adjust graph drawing settings");
+        menubar.add(viewMenu);
+
+        this.zoomIn = new JMenuItem("Increase Zoom");
+        this.zoomIn.addActionListener(this);
+        this.zoomIn.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_EQUALS, KeyEvent.CTRL_MASK));
+        this.zoomIn.getAccessibleContext().setAccessibleDescription(
+                "Increases the zoom level of the graph");
+        viewMenu.add(this.zoomIn);
+
+        this.zoomOut = new JMenuItem("Decrease Zoom");
+        this.zoomOut.addActionListener(this);
+        this.zoomOut.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_MINUS, KeyEvent.CTRL_MASK));
+        this.zoomOut.getAccessibleContext().setAccessibleDescription(
+                "Decreases the zoom level of the graph");
+        viewMenu.add(this.zoomOut);
+
+        this.zoomReset = new JMenuItem("Reset Zoom");
+        this.zoomReset.addActionListener(this);
+        this.zoomReset.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_0, KeyEvent.CTRL_MASK));
+        this.zoomReset.getAccessibleContext().setAccessibleDescription(
+                "Resets the zoom level of the graph to the default value");
+        viewMenu.add(this.zoomReset);
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(this.createNew)) {
+        Object source = actionEvent.getSource();
+
+        if (source.equals(this.createNew)) {
             this.sidebar.newEquation();
+        } else if (source.equals(this.zoomIn)) {
+            this.graph.increaseScale();
+        } else if (source.equals(this.zoomOut)) {
+            this.graph.decreaseScale();
+        } else if (source.equals(this.zoomReset)) {
+            this.graph.setScale(1);
         }
     }
 
