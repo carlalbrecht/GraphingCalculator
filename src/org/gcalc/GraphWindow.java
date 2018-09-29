@@ -40,6 +40,7 @@ public class GraphWindow extends JFrame implements ActionListener {
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                           this.sidebar, this.graph);
         split.setDividerLocation(300);
+        split.setContinuousLayout(true);
         pane.add(split, BorderLayout.CENTER);
 
         // Create, initialise and add menu bar

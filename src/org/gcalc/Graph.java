@@ -102,14 +102,48 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
     /**
      * Draws the x and y axes, and the grid lines for each integer along each
-     * axis.
+     * axis. Draws numbers for each perpendicular dashed line.
      */
     protected void drawGrid(Graphics2D g) {
-        g.setColor(new Color(64, 64, 64));
+        g.setColor(new Color(48, 48, 48));
+
+        // Axis lines
         g.setStroke(new BasicStroke(2));
         g.draw(new Line2D.Double(0, this.img.getHeight() / 2,
                                  this.img.getWidth(), this.img.getHeight() / 2));
         g.draw(new Line2D.Double(this.img.getWidth() / 2, 0,
                                  this.img.getWidth() / 2, this.img.getHeight()));
+
+        int imgWidth = this.img.getWidth(), imgHeight = this.img.getHeight();
+
+        // X axis vertical lines & numbers
+        g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10,
+                                    new float[]{10, 5}, (29 - (imgHeight % 30)) / 2.0f + 20));
+
+        int xInterval = 50;
+        int xNumInterval = 1, xCurrent = 0;
+        for (int x = imgWidth / 2 - xInterval; x >= 0; x -= xInterval) {
+            g.draw(new Line2D.Double(x, imgHeight, x, 0));
+            g.draw(new Line2D.Double(imgWidth - x, imgHeight, imgWidth - x, 0));
+
+            xCurrent += xNumInterval;
+            g.drawString("-" + Integer.toString(xCurrent), x + 2, imgHeight / 2 + 14);
+            g.drawString(Integer.toString(xCurrent), imgWidth - x + 2, imgHeight / 2 + 14);
+        }
+
+        // Y axis horizontal lines & numbers
+        g.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10,
+                                    new float[]{10, 5}, (29 - (imgWidth % 30)) / 2.0f + 20));
+
+        int yInterval = 50;
+        int yNumInterval = 1, yCurrent = 0;
+        for (int y = imgHeight / 2 - yInterval; y >= 0; y -= yInterval) {
+            g.draw(new Line2D.Double(imgWidth, y, 0, y));
+            g.draw(new Line2D.Double(imgWidth, imgHeight - y, 0, imgHeight - y));
+
+            yCurrent += yNumInterval;
+            g.drawString(Integer.toString(yCurrent), imgWidth / 2 + 2, y + 14);
+            g.drawString("-" + Integer.toString(yCurrent), imgWidth / 2 + 2, imgHeight - y + 14);
+        }
     }
 }
