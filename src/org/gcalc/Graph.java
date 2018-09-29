@@ -21,6 +21,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
             new Color(255, 0, 255)
     };
 
+    protected static final int normInterval = 50;
+
     private int width, height;
     private BufferedImage img;
     private double scale = 1;
@@ -134,6 +136,25 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
         drawGrid(g);
 
+        double bounds = (this.img.getWidth() / 2.0) / (normInterval * this.scale);
+        boolean lastValSet = false;
+        double lastVal = 0;
+        int drawX = 0;
+        for (double x = -bounds; x < bounds; x += (2 * bounds) / this.img.getWidth()) {
+            if (!lastValSet) {
+                lastVal = Math.sin(x);
+                lastValSet = true;
+                continue;
+            }
+
+            g.setColor(lineColours[0]);
+            g.setStroke(new BasicStroke(2));
+            g.draw(new Line2D.Double(drawX - 1, this.img.getHeight() / 2 - lastVal * (normInterval * this.scale),
+                    drawX, this.img.getHeight() / 2 - Math.sin(x) * (normInterval * this.scale)));
+            lastVal = Math.sin(x);
+            drawX++;
+        }
+
         this.repaint();
     }
 
@@ -161,9 +182,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
                                     dashPattern, (29 - (imgHeight % 30)) / 2.0f + 20));
 
         // Janky code to scale interval between perpendicular lines
-        final int xNormInterval = 50;
-        int xScaledInt = (int) Math.round(50 * this.scale);
-        int xMultiplier = Math.max(Math.round((float) xNormInterval / (float) xScaledInt), 1);
+        int xScaledInt = (int) Math.round(normInterval * this.scale);
+        int xMultiplier = Math.max(Math.round((float) normInterval / (float) xScaledInt), 1);
 
         int xInterval = xMultiplier * xScaledInt;
         int xNumInterval = xMultiplier, xCurrent = 0;
