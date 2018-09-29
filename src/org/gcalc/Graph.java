@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class Graph extends JLabel implements ComponentListener, EquationListener {
@@ -89,6 +92,24 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
      * removed.
      */
     protected void redraw() {
+        Graphics2D g = this.img.createGraphics();
 
+        g.setBackground(Color.BLACK);
+        g.clearRect(0, 0, this.img.getWidth(), this.img.getHeight());
+
+        drawGrid(g);
+    }
+
+    /**
+     * Draws the x and y axes, and the grid lines for each integer along each
+     * axis.
+     */
+    protected void drawGrid(Graphics2D g) {
+        g.setColor(new Color(64, 64, 64));
+        g.setStroke(new BasicStroke(2));
+        g.draw(new Line2D.Double(0, this.img.getHeight() / 2,
+                                 this.img.getWidth(), this.img.getHeight() / 2));
+        g.draw(new Line2D.Double(this.img.getWidth() / 2, 0,
+                                 this.img.getWidth() / 2, this.img.getHeight()));
     }
 }
