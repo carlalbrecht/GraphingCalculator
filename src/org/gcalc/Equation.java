@@ -59,7 +59,12 @@ public class Equation {
         protected ArrayList<Instruction> ops = new ArrayList<>();
 
         public Expression(String rawExpression) throws InvalidParameterException {
-            this.rawExpression = rawExpression;
+            this.rawExpression = rawExpression
+                    .replaceAll(" ", "")        // Eases parsing by removing whitespace
+                    .replaceAll("-\\++", "-")   // Simplify equivalent expressions:
+                    .replaceAll("/\\++", "/")
+                    .replaceAll("\\+\\++", "+")
+                    .replaceAll("\\*\\++", "+");
 
             this.parseRecursive();
         }
@@ -109,30 +114,68 @@ public class Equation {
             return ret + "}";
         }
 
+        /**
+         * Recursively parses this.rawExpression, creating new Expressions for
+         * each bracketed region.
+         */
         protected void parseRecursive() {
             String raw = this.rawExpression;
+            StringBuilder literalBuilder = new StringBuilder();
+            boolean lastCharWasOper = false;
 
-            while (raw.length() > 0) {
-                // Create sub-expression from bracketed region
-                int parenLoc = raw.indexOf("(");
-                if (parenLoc > -1) {
+            parseLoop:
+            for (int i = 0; i < raw.length(); i++) {
+                char r = raw.charAt(i);
+
+                // Read literal number and then push a push operation to the
+                // operation stack which loads that number
+                if (lastCharWasOper && r == '-' || r >= '0' && r <= '9' || r == '.') {
+                    literalBuilder.append(r);
+
+                    // If we reach the end of the string, we still need to push
+                    // the number
+                    if (i == raw.length() - 1)
+                        ops.add(new Instruction(Instruction.InstType.PUSH,
+                                Double.parseDouble(literalBuilder.toString())));
+                } else {
+                    // We're no longer reading a number
+                    if (literalBuilder.length() > 0)
+                        ops.add(new Instruction(Instruction.InstType.PUSH,
+                                Double.parseDouble(literalBuilder.toString())));
+                        literalBuilder = new StringBuilder();
+                }
+
+                // Search for end of enclosed region, then create an Expression
+                // from it
+                if (r == '(') {
+                    int parenLoc = i;
                     int depth = 0;
-                    for (int i = parenLoc; i < raw.length(); i++) {
+
+                    // Continue outer string character iterator
+                    for (; i < raw.length(); i++) {
                         char c = raw.charAt(i);
 
+                        // Find end of initial region
                         if (c == '(')
                             depth++;
                         else if (c == ')')
                             depth--;
 
                         if (depth == 0) {
+                            // Create expression from bracketed contents
                             String subExpr = raw.substring(parenLoc + 1, i);
                             ops.add(new Instruction(Instruction.InstType.EXPR,
                                                     new Expression(subExpr)));
-                            return;
+
+                            // Skip throwing exception
+                            continue parseLoop;
                         }
                     }
-                } else return;
+
+                    // There were more ('s than )'s
+                    throw new InvalidParameterException(
+                            "Uneven number of start and end parentheses");
+                }
             }
         }
     }
