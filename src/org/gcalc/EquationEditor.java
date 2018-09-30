@@ -1,16 +1,20 @@
 package org.gcalc;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 
-public class EquationEditor extends JPanel {
+public class EquationEditor extends JPanel implements AncestorListener {
     private int id, width;
 
     private JLabel title;
     private JButton deleteBtn;
     private JTextField editor;
+
+    private Color editorNormalColor;
 
     public EquationEditor(int id) {
         this.id = id;
@@ -43,6 +47,10 @@ public class EquationEditor extends JPanel {
         });
         this.add(this.editor);
 
+        // Move focus to new editor field so the user doesn't have to click it
+        // NOTE: this is performed as a callback, otherwise it doesn't work
+        this.editor.addAncestorListener(this);
+
         // Line up buttons on bottom row
         JPanel buttonRow = new JPanel();
         buttonRow.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -69,7 +77,28 @@ public class EquationEditor extends JPanel {
             lightenComponent(buttonRow);
             lightenComponent(this.deleteBtn);
         }
+
+        this.editorNormalColor = this.editor.getBackground();
     }
+
+    @Override
+    public void ancestorAdded(AncestorEvent ancestorEvent) {
+        final AncestorListener a = this;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final JComponent c = ancestorEvent.getComponent();
+                c.requestFocusInWindow();
+                c.removeAncestorListener(a);
+            }
+        });
+    }
+
+    @Override
+    public void ancestorRemoved(AncestorEvent ancestorEvent) { }
+
+    @Override
+    public void ancestorMoved(AncestorEvent ancestorEvent) { }
 
     public int getID() {
         return this.id;
@@ -90,7 +119,7 @@ public class EquationEditor extends JPanel {
      * modified.
      */
     protected void equationChanged() {
-        System.out.println("modified");
+        this.editor.setBackground(new Color(228, 48, 0));
     }
 
     /**

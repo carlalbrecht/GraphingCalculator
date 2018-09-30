@@ -122,13 +122,16 @@ public class Equation {
          * each bracketed region.
          */
         protected void parseRecursive() {
+            // Use a shorter name, since we use this value everywhere
             String raw = this.rawExpression;
+            // Used to construct number literals to parse for PUSH ops
             StringBuilder literalBuilder = new StringBuilder();
-
             // Determine whether to read a - sign as part of a literal
             boolean lastCharWasOper = false;
             // Determine if a bracketed region is part of a function call
             Instruction fnInst = null;
+            // Operation stack used to store lower-precedence operators
+            ArrayList<Character> opStack = new ArrayList<>();
 
             parseLoop:
             for (int i = 0; i < raw.length(); i++) {
@@ -138,6 +141,9 @@ public class Equation {
                 // operation stack which loads that number
                 if (lastCharWasOper && r == '-' || r >= '0' && r <= '9' || r == '.') {
                     literalBuilder.append(r);
+
+                    // Prevents [num]+-[num] forcing an immediate ADD instruction
+                    if (r == '-') continue;
 
                     // If we reach the end of the string, we still need to push
                     // the number
@@ -189,6 +195,9 @@ public class Equation {
                             ops.add(new Instruction(Instruction.InstType.EXPR,
                                                     new Expression(subExpr)));
 
+                            // Prevents [op](...)-[val] causing problems
+                            lastCharWasOper = false;
+
                             if (fnInst != null) {
                                 // Push function call if the bracketed region
                                 // was an argument to the function
@@ -205,6 +214,41 @@ public class Equation {
                     throw new InvalidParameterException(
                             "Uneven number of start and end parentheses");
                 }
+
+                // Handle operators and operator precedence
+                if (r == '+' || r == '-' || r == '/' || r == '*') {
+                    lastCharWasOper = true;
+
+                    if (opStack.isEmpty()) {
+                        opStack.add(r);
+                    } else {
+                        if (higherPrecedence(opStack.get(opStack.size() - 1), r)) {
+                            opStack.add(r);
+                        } else {
+                            // Keep removing operators that are higher precedence
+                            // than the current
+                            while (!opStack.isEmpty()) {
+                                char nextOp = opStack.get(opStack.size() - 1);
+
+                                if (!higherPrecedence(nextOp, r)) {
+                                    opStack.remove(opStack.size() - 1);
+                                    this.ops.add(Instruction.fromOperator(nextOp));
+                                } else break;
+                            }
+
+                            opStack.add(r);
+                        }
+                    }
+                } else {
+                    lastCharWasOper = false;
+                }
+            }
+
+            // Dump remaining operations into operation queue
+            while (!opStack.isEmpty()) {
+                char nextOp = opStack.get(opStack.size() - 1);
+                opStack.remove(opStack.size() - 1);
+                this.ops.add(Instruction.fromOperator(nextOp));
             }
         }
 
@@ -248,6 +292,19 @@ public class Equation {
 
             return null;
         }
+
+        /**
+         * Compares the precedence of two basic operators
+         * @param lower The operator that is expected to be lower
+         * @param higher The operator that is expected to be higher
+         * @return Whether lower has a lower precedence than higher
+         */
+        protected static boolean higherPrecedence(char lower, char higher) {
+            // Nothing has lower precedence than + or -
+            if (higher == '+' || higher == '-') return false;
+            // * and / are only higher precedence than + or -
+            else return (lower == '+' || lower == '-');
+        }
     }
 }
 
@@ -282,5 +339,24 @@ class Instruction {
     public Instruction(InstType instruction, Object arg) {
         this.instruction = instruction;
         this.arg = arg;
+    }
+
+    /**
+     * Creates an Instruction from one of +,-,/,*
+     * @param op A char representing the operator to create
+     */
+    public static Instruction fromOperator(char op) {
+        switch(op) {
+            case '+':
+                return new Instruction(InstType.ADD, null);
+            case '-':
+                return new Instruction(InstType.SUB, null);
+            case '/':
+                return new Instruction(InstType.DIV, null);
+            case '*':
+                return new Instruction(InstType.MUL, null);
+            default:
+                return null;
+        }
     }
 }
