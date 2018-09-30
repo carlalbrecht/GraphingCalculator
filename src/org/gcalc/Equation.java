@@ -93,6 +93,9 @@ public class Equation {
                     case FACT:
                         ret += "FACT";
                         break;
+                    case PLUSMINUS:
+                        ret += "EVALBOTH_ADD_SUB";
+                        break;
                     case NATIVEFUNC:
                         ret += "NATIVEFUNC " + i.arg;
                         break;
@@ -121,7 +124,11 @@ public class Equation {
         protected void parseRecursive() {
             String raw = this.rawExpression;
             StringBuilder literalBuilder = new StringBuilder();
+
+            // Determine whether to read a - sign as part of a literal
             boolean lastCharWasOper = false;
+            // Determine if a bracketed region is part of a function call
+            Instruction fnInst = null;
 
             parseLoop:
             for (int i = 0; i < raw.length(); i++) {
@@ -143,6 +150,21 @@ public class Equation {
                         ops.add(new Instruction(Instruction.InstType.PUSH,
                                 Double.parseDouble(literalBuilder.toString())));
                         literalBuilder = new StringBuilder();
+                }
+
+                // The factorial operator is a unary operator, meaning that it
+                // has no operator precedence. Therefore, we just push it
+                if (r == '!') {
+                    ops.add(new Instruction(Instruction.InstType.FACT, null));
+                }
+
+                // Check to see if the next operation is a function (i.e. a
+                // trigonometric operation) using a string lookahead
+                fnInst = this.nativeFnLookahead(raw.substring(i));
+                if (fnInst != null) {
+                    // Increment character pointer and fetch new character
+                    i += ((String) fnInst.arg).length();
+                    r = raw.charAt(i);
                 }
 
                 // Search for end of enclosed region, then create an Expression
@@ -167,6 +189,13 @@ public class Equation {
                             ops.add(new Instruction(Instruction.InstType.EXPR,
                                                     new Expression(subExpr)));
 
+                            if (fnInst != null) {
+                                // Push function call if the bracketed region
+                                // was an argument to the function
+                                ops.add(fnInst);
+                                fnInst = null;
+                            }
+
                             // Skip throwing exception
                             continue parseLoop;
                         }
@@ -178,6 +207,47 @@ public class Equation {
                 }
             }
         }
+
+        protected Instruction nativeFnLookahead(String substr) {
+            // Basically just check if the lookahead string starts with a
+            // supported function. This _could_ be expressed as a mapping
+            // table and loop or something, but I can't be bothered.
+            if (substr.startsWith("sin(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "SIN");
+            } else if (substr.startsWith("cos(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "COS");
+            } else if (substr.startsWith("tan(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "TAN");
+            } else if (substr.startsWith("asin(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "ASIN");
+            } else if (substr.startsWith("acos(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "ACOS");
+            } else if (substr.startsWith("atan(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "ATAN");
+            } else if (substr.startsWith("sinh(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "SINH");
+            } else if (substr.startsWith("cosh(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "COSH");
+            } else if (substr.startsWith("tanh(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "TANH");
+            } else if (substr.startsWith("ln(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "LN");
+            } else if (substr.startsWith("log(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "LOG");
+            } else if (substr.startsWith("sqrt(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "SQRT");
+            } else if (substr.startsWith("cbrt(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "CBRT");
+            } else if (substr.startsWith("floor(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "FLOOR");
+            } else if (substr.startsWith("ceil(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "CEIL");
+            } else if (substr.startsWith("round(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "ROUND");
+            }
+
+            return null;
+        }
     }
 }
 
@@ -187,7 +257,7 @@ public class Equation {
 class Instruction {
     public enum InstType {
         // No args
-        ADD, SUB, MUL, DIV, FACT,
+        ADD, SUB, MUL, DIV, FACT, PLUSMINUS,
         // Takes a string naming a math function to execute (e.g. "sin")
         NATIVEFUNC,
         // Takes an Expression instance, which is evaluated, and the result pushed

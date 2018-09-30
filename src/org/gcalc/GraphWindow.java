@@ -134,7 +134,7 @@ public class GraphWindow extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         try {
-            System.out.println(new Equation.Expression("sin(4 + (3x+(7)*(4*3.5)))"));
+            System.out.println(new Equation.Expression("sin(4 + (3x+(7!)*(4*3.5)))"));
             // Create root window instance, or just give up
             new GraphWindow();
         } catch (Exception e) {
