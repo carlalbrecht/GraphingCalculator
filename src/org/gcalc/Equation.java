@@ -132,6 +132,9 @@ public class Equation {
             Instruction fnInst = null;
             // Operation stack used to store lower-precedence operators
             ArrayList<Character> opStack = new ArrayList<>();
+            // Used to prevent certain problems, such as multiplying a variable
+            // with nothing if it is the first value in the expression
+            boolean firstIter = true;
 
             parseLoop:
             for (int i = 0; i < raw.length(); i++) {
@@ -171,6 +174,15 @@ public class Equation {
                     // Increment character pointer and fetch new character
                     i += ((String) fnInst.arg).length();
                     r = raw.charAt(i);
+                } else if (r >= 'a' && r <= 'z') {
+                    // Probably a variable name, so we'll try to push it
+                    ops.add(new Instruction(Instruction.InstType.PUSHVAR,
+                            String.valueOf(r)));
+
+                    // If the variable immediately follows a literal or another
+                    // variable, we multiply them
+                    if (!lastCharWasOper && !firstIter)
+                        ops.add(new Instruction(Instruction.InstType.MUL, null));
                 }
 
                 // Search for end of enclosed region, then create an Expression
@@ -195,15 +207,21 @@ public class Equation {
                             ops.add(new Instruction(Instruction.InstType.EXPR,
                                                     new Expression(subExpr)));
 
-                            // Prevents [op](...)-[val] causing problems
-                            lastCharWasOper = false;
-
                             if (fnInst != null) {
                                 // Push function call if the bracketed region
                                 // was an argument to the function
                                 ops.add(fnInst);
                                 fnInst = null;
                             }
+
+                            // Allow variables / literals to multiply bracketed
+                            // regions and functions
+                            if (!lastCharWasOper && !firstIter) {
+                                ops.add(new Instruction(Instruction.InstType.MUL, null));
+                            }
+
+                            // Prevents [op](...)-[val] causing problems
+                            lastCharWasOper = false;
 
                             // Skip throwing exception
                             continue parseLoop;
@@ -242,6 +260,8 @@ public class Equation {
                 } else {
                     lastCharWasOper = false;
                 }
+
+                firstIter = false;
             }
 
             // Dump remaining operations into operation queue
@@ -295,6 +315,7 @@ public class Equation {
 
         /**
          * Compares the precedence of two basic operators
+         * 
          * @param lower The operator that is expected to be lower
          * @param higher The operator that is expected to be higher
          * @return Whether lower has a lower precedence than higher
@@ -343,6 +364,7 @@ class Instruction {
 
     /**
      * Creates an Instruction from one of +,-,/,*
+     *
      * @param op A char representing the operator to create
      */
     public static Instruction fromOperator(char op) {
