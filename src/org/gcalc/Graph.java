@@ -36,6 +36,9 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
         this.setIcon(new ImageIcon(this.img));
         this.addComponentListener(this);
+
+        // DEBUG
+        this.equations.add(new Equation("sin(x)"));
     }
 
     @Override
@@ -135,25 +138,12 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
         g.setColor(Color.BLACK);
         g.fill(new Rectangle2D.Double(0, 0, this.img.getWidth(), this.img.getHeight()));
 
-        drawGrid(g);
+        this.drawGrid(g);
 
-        double bounds = (this.img.getWidth() / 2.0) / (normInterval * this.scale);
-        boolean lastValSet = false;
-        double lastVal = 0;
-        int drawX = 0;
-        for (double x = -bounds; x < bounds; x += (2 * bounds) / this.img.getWidth()) {
-            if (!lastValSet) {
-                lastVal = Math.sin(x);
-                lastValSet = true;
-                continue;
-            }
-
-            g.setColor(lineColours[0]);
-            g.setStroke(new BasicStroke(2));
-            g.draw(new Line2D.Double(drawX - 1, this.img.getHeight() / 2.0 - lastVal * (normInterval * this.scale),
-                    drawX, this.img.getHeight() / 2.0 - Math.sin(x) * (normInterval * this.scale)));
-            lastVal = Math.sin(x);
-            drawX++;
+        int id = 0;
+        for (Equation e : this.equations) {
+            this.drawEquation(g, id, e);
+            id++;
         }
 
         this.repaint();
@@ -162,6 +152,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
     /**
      * Draws the x and y axes, and the grid lines for each integer along each
      * axis. Draws numbers for each perpendicular dashed line.
+     *
+     * @param g The graphics object to draw with
      */
     protected void drawGrid(Graphics2D g) {
         float[] dashPattern = new float[]{10 * (float) this.scale,
@@ -210,6 +202,48 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
             yCurrent += yNumInterval;
             g.drawString(Integer.toString(yCurrent), imgWidth / 2 + 2, y + 14);
             g.drawString("-" + Integer.toString(yCurrent), imgWidth / 2 + 2, imgHeight - y + 14);
+        }
+    }
+
+    /**
+     * Takes an equation and plugs each screen-visible x axis value into it,
+     * then draws the output value(s) onto the graph.
+     *
+     * @param g The graphics object to draw with
+     * @param id The equation number (decides which colour to use to draw with)
+     * @param e A prepared equation to plot
+     */
+    protected void drawEquation(Graphics2D g, int id, Equation e) {
+        // TODO handle multiple roots
+        // TODO handle invalid ranges (i.e. NaN return values)
+
+        // Use equation colour to draw equation line(s)
+        g.setColor(lineColours[id % lineColours.length]);
+
+        // Determine the range of X values that are visible
+        double bounds = (this.img.getWidth() / 2.0) / (normInterval * this.scale);
+
+        // Values used inside loop
+        boolean lastValSet = false;
+        double lastVal = 0;
+        int drawX = 0;
+
+        for (double x = -bounds; x < bounds; x += (2 * bounds) / this.img.getWidth()) {
+            if (!lastValSet) {
+                lastVal = e.evaluate(x)[0];
+                lastValSet = true;
+                continue;
+            }
+
+            double currentVal = e.evaluate(x)[0];
+
+            // Draw line between last and current value
+            g.setStroke(new BasicStroke(2));
+            g.draw(new Line2D.Double(drawX - 1, this.img.getHeight() / 2.0 - lastVal * (normInterval * this.scale),
+                    drawX, this.img.getHeight() / 2.0 - currentVal * (normInterval * this.scale)));
+
+            lastVal = currentVal;
+            drawX++;
         }
     }
 }

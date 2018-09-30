@@ -61,6 +61,13 @@ public class EquationEditor extends JPanel {
             darkenComponent(this.editor);
             darkenComponent(buttonRow);
             darkenComponent(this.deleteBtn);
+        } else {
+            lightenComponent(this);
+            lightenComponent(titleRow);
+            lightenComponent(this.title);
+            lightenComponent(this.editor);
+            lightenComponent(buttonRow);
+            lightenComponent(this.deleteBtn);
         }
     }
 
@@ -87,11 +94,32 @@ public class EquationEditor extends JPanel {
     }
 
     /**
-     * Lowers the background HSB's brightness by 3.5%.
+     * Lowers the background HSB's brightness by 2%.
      *
      * @param c The component to darken
      */
     private void darkenComponent(Component c) {
+        this.hsvDecrease(c, 0.02f);
+    }
+
+    /**
+     * Raises the background HSB's brightness by 3.5%.
+     *
+     * @param c The component to lighten
+     */
+    private void lightenComponent(Component c) {
+        this.hsvDecrease(c, -0.035f);
+    }
+
+
+    /**
+     * Retrieves a component's current colour, then decreases it's HSB brightness
+     * by hsvPercentage.
+     *
+     * @param c The component to adjust
+     * @param hsvPercentage The amount to alter the colour brightness by
+     */
+    private void hsvDecrease(Component c, float hsvPercentage) {
         Color origColour = c.getBackground();
         float[] hsv = Color.RGBtoHSB(
                 origColour.getRed(),
@@ -99,6 +127,6 @@ public class EquationEditor extends JPanel {
                 origColour.getBlue(),
                 null);
         c.setBackground(new Color(
-                Color.HSBtoRGB(hsv[0], hsv[1], hsv[2] - (float) 0.035)));
+                Color.HSBtoRGB(hsv[0], hsv[1], hsv[2] - hsvPercentage)));
     }
 }

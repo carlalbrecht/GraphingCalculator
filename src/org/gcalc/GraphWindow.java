@@ -16,8 +16,10 @@ public class GraphWindow extends JFrame implements ActionListener {
     private JMenuItem createNew, deleteAll, zoomIn, zoomOut, zoomReset;
 
     public GraphWindow() throws Exception {
-        // Set Darcula as UI theme
-        UIManager.setLookAndFeel(DarculaLaf.class.getName());
+        // Try to set Darcula as UI theme. Otherwise, we'll just use the default
+        try {
+            UIManager.setLookAndFeel(DarculaLaf.class.getName());
+        } catch (Exception e) { }
 
         // Set window properties
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -132,6 +134,7 @@ public class GraphWindow extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         try {
+            System.out.println(new Equation.Expression("sin(4 + (3x*(7)+(4*3)))"));
             // Create root window instance, or just give up
             new GraphWindow();
         } catch (Exception e) {
