@@ -6,6 +6,7 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class EquationEditor extends JPanel implements AncestorListener {
     private int id, width;
@@ -15,6 +16,10 @@ public class EquationEditor extends JPanel implements AncestorListener {
     private JTextField editor;
 
     private Color editorNormalColor;
+
+    private ArrayList<EquationEditorListener> listeners = new ArrayList<>();
+
+    private Equation equation = new Equation("");
 
     public EquationEditor(int id) {
         this.id = id;
@@ -114,12 +119,55 @@ public class EquationEditor extends JPanel implements AncestorListener {
         this.repaint();
     }
 
+    public void addEquationEditorListener(EquationEditorListener listener) {
+        this.listeners.add(listener);
+    }
+
+    /**
+     * Called when the equation is initially modified, as we automatically
+     * assume that the new equation will be valid. Sets the JTextField's
+     * background colour to it's normal value.
+     */
+    public void setValid() {
+        this.editor.setBackground(this.editorNormalColor);
+    }
+
+    /**
+     * Called when the Graph attempts to evaluate the equation, if it finds the
+     * equation to be invalid.
+     */
+    public void setInvalid() {
+        this.editor.setBackground(new Color(228, 48, 0));
+    }
+
+    /**
+     * Retrieves the EquationEditor's Equation
+     *
+     * @return The equation representing the EquationEditor's contents
+     */
+    public Equation getEquation() {
+        return this.equation;
+    }
+
     /**
      * Triggers processing of a new equation when the equation field is
      * modified.
      */
     protected void equationChanged() {
-        this.editor.setBackground(new Color(228, 48, 0));
+        try {
+            this.equation = new Equation(this.editor.getText());
+        } catch (Exception e) {
+            // Something is very wrong with the equation if we can't even get
+            // this far. Bail here
+            this.setInvalid();
+            return;
+        }
+
+        this.setValid();
+
+        for (EquationEditorListener l : this.listeners) {
+            l.equationEdited(this.id, this.equation);
+        }
     }
 
     /**

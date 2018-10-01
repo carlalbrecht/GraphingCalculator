@@ -6,7 +6,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
-public class Sidebar extends JScrollPane implements ComponentListener {
+public class Sidebar extends JScrollPane implements ComponentListener, EquationEditorListener {
     private ArrayList<EquationListener> listeners = new ArrayList<>();
     private ArrayList<EquationEditor> editors = new ArrayList<>();
 
@@ -28,9 +28,7 @@ public class Sidebar extends JScrollPane implements ComponentListener {
         container.setMaximumSize(new Dimension(width - 10, Integer.MAX_VALUE));
 
         // Create initial equation editor
-        EquationEditor editor = new EquationEditor(0);
-        this.container.add(editor);
-        this.editors.add(editor);
+        this.newEquation();
 
         this.container.addComponentListener(this);
         this.addComponentListener(this);
@@ -55,12 +53,27 @@ public class Sidebar extends JScrollPane implements ComponentListener {
     public void componentHidden(ComponentEvent componentEvent) { }
 
     /**
+     * Signals to a listener that an EquationEditor's equation field has been
+     * modified.
+     *
+     * @param id The id of the EquationEditor
+     * @param equation The EquationEditors Equation instance
+     */
+    public void equationEdited(int id, Equation equation) {
+        // Notify listeners that an existing equation has been updated
+        for (EquationListener l : this.listeners) {
+            l.equationChanged(id, equation);
+        }
+    }
+
+    /**
      * Triggers the creation of a new, blank equation, and the callback of all
      * EquationListeners once the equation has been created
      */
     public void newEquation() {
         int id = this.editors.size();
         EquationEditor e = new EquationEditor(id);
+        e.addEquationEditorListener(this);
         this.container.add(e);
         this.editors.add(e);
 
@@ -76,7 +89,7 @@ public class Sidebar extends JScrollPane implements ComponentListener {
 
         // Notify listeners that a new equation has been added
         for (EquationListener l : this.listeners) {
-            // TODO l.equationAdded(id, e);
+            l.equationAdded(id, new Equation(""), e);
         }
     }
 
@@ -87,6 +100,11 @@ public class Sidebar extends JScrollPane implements ComponentListener {
      * @param listener The listener to additionally forward events to
      */
     public void addEquationListener(EquationListener listener) {
-        listeners.add(listener);
+        this.listeners.add(listener);
+
+        // Send current list of equations to new listener
+        for (EquationEditor e : this.editors) {
+            listener.equationAdded(e.getID(), e.getEquation(), e);
+        }
     }
 }

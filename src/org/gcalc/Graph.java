@@ -27,6 +27,7 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
     private BufferedImage img;
     private double scale = 1;
     private ArrayList<Equation> equations = new ArrayList<>();
+    private ArrayList<EquationEditor> editors = new ArrayList<>();
 
     public Graph(int width, int height) {
         this.width = width;
@@ -36,9 +37,6 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
         this.setIcon(new ImageIcon(this.img));
         this.addComponentListener(this);
-
-        // DEBUG
-        this.equations.add(new Equation("sqrt(4 - x^2)"));
     }
 
     @Override
@@ -69,9 +67,12 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
      *
      * @param id The array index of the new equation
      * @param newEquation The newly added equation
+     * @param editor The editor used to modify the equation
      */
-    public void equationAdded(int id, Equation newEquation) {
-
+    public void equationAdded(int id, Equation newEquation, EquationEditor editor) {
+        this.equations.add(id, newEquation);
+        this.editors.add(id, editor);
+        this.redraw();
     }
 
     /**
@@ -91,7 +92,8 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
      * @param e The equation object to replace the old one with
      */
     public void equationChanged(int id, Equation e) {
-
+        this.equations.set(id, e);
+        this.redraw();
     }
 
     /**
@@ -142,7 +144,13 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
 
         int id = 0;
         for (Equation e : this.equations) {
-            this.drawEquation(g, id, e);
+            try {
+                this.drawEquation(g, id, e);
+            } catch (Exception ex) {
+                // Equation is invalid, so inform the EquationEditor
+                this.editors.get(id).setInvalid();
+            }
+
             id++;
         }
 

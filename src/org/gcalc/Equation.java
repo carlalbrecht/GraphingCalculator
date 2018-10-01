@@ -9,9 +9,15 @@ import java.util.Map;
 
 public class Equation {
     private Expression rhs;
+    boolean isEmpty;
 
     public Equation(String rawEquation) throws InvalidParameterException {
         rawEquation = rawEquation.replaceAll(" ", "");
+        if (rawEquation.isEmpty()) {
+            this.isEmpty = true;
+            return;
+        }
+
         String[] equationParts = rawEquation.split("=");
 
         if (equationParts.length > 2)
@@ -44,10 +50,23 @@ public class Equation {
      * @return Array of roots - each root is either a valid number, or NaN
      */
     public double[] evaluate(double x) {
-        Map<String, Double> args = new HashMap<>();
-        args.put("x", x);
+        if (this.isEmpty)
+            return new double[]{Double.NaN};
+        else {
+            Map<String, Double> args = new HashMap<>();
+            args.put("x", x);
 
-        return this.rhs.evaluate(args);
+            return this.rhs.evaluate(args);
+        }
+    }
+
+    /**
+     * Retrieves the expression that is evaluated by evaluate()
+     *
+     * @return The right hand side of the Equation
+     */
+    public Expression getRightHandSide() {
+        return this.rhs;
     }
 
     /**

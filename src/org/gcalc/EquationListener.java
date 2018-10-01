@@ -7,8 +7,9 @@ public interface EquationListener {
      *
      * @param id The array index of the new equation
      * @param newEquation The newly added equation
+     * @param editor The editor used to modify the equation
      */
-    void equationAdded(int id, Equation newEquation);
+    void equationAdded(int id, Equation newEquation, EquationEditor editor);
 
     /**
      * Called when one or more equations have been removed.

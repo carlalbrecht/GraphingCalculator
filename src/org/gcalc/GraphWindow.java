@@ -136,10 +136,6 @@ public class GraphWindow extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         try {
-            Equation.Expression e = new Equation.Expression("3sin(4 + (3x+(7!)*(4+-3*3.5))) + 3(4-3)");
-            Map<String, Double> argz = new HashMap<>();
-            argz.put("x", 4d);
-            System.out.println(e.evaluate(argz)[0]);
             // Create root window instance, or just give up
             new GraphWindow();
         } catch (Exception e) {
