@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GraphWindow extends JFrame implements ActionListener {
     private JMenuBar menuBar;
@@ -134,7 +136,10 @@ public class GraphWindow extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         try {
-            System.out.println(new Equation.Expression("3sin(4 + (3x+(7!)*(4+-3*3.5))) + 3(4-3)"));
+            Equation.Expression e = new Equation.Expression("3sin(4 + (3x+(7!)*(4+-3*3.5))) + 3(4-3)");
+            Map<String, Double> argz = new HashMap<>();
+            argz.put("x", 4d);
+            System.out.println(e.evaluate(argz)[0]);
             // Create root window instance, or just give up
             new GraphWindow();
         } catch (Exception e) {

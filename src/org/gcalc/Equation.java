@@ -1,7 +1,10 @@
 package org.gcalc;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Equation {
     public Equation(String rawEquation) throws InvalidParameterException {
@@ -115,6 +118,68 @@ public class Equation {
             }
 
             return ret + "}";
+        }
+
+
+        /**
+         * Runs down the operation list, performing each instruction in sequence
+         * using a stack machine. `PUSHVAR` instructions lookup keys in the vars
+         * map, and an exception is thrown if an operation references an
+         * undefined variable.
+         *
+         * Occasionally, an expression contains multiple roots. In this case,
+         * one result is returned for each, and the same position in the array
+         * is guaranteed to correlate to the same root between invocations.
+         *
+         * @param vars The variable values to use to evaluate the expression
+         * @return A list of results, one for each root of the expression
+         */
+        public double[] evaluate(Map<String, Double> vars) throws IndexOutOfBoundsException {
+            // TODO add support for multiple return values
+            ArrayList<Double> stack = new ArrayList<>();
+
+            // Used for instructions where order of operands matters
+            double n1, n2;
+
+            for (Instruction i : this.ops) {
+                switch (i.instruction) {
+                    case ADD:
+                        push(stack, pop(stack) + pop(stack));
+                        break;
+                    case SUB:
+                        n1 = pop(stack);
+                        n2 = pop(stack);
+                        push(stack, n2 - n1);
+                        break;
+                    case MUL:
+                        push(stack, pop(stack) * pop(stack));
+                        break;
+                    case DIV:
+                        n1 = pop(stack);
+                        n2 = pop(stack);
+                        push(stack, n2 / n1);
+                        break;
+                    case FACT:
+                        push(stack, Factorial.fact(pop(stack)));
+                        break;
+                    case PLUSMINUS:
+                        throw new NotImplementedException();
+                    case NATIVEFUNC:
+                        push(stack, this.nativeFnInvoke(i, stack));
+                        break;
+                    case EXPR:
+                        push(stack, ((Expression) i.arg).evaluate(vars)[0]);
+                        break;
+                    case PUSH:
+                        push(stack, (double) i.arg);
+                        break;
+                    case PUSHVAR:
+                        push(stack, vars.get(i.arg));
+                        break;
+                }
+            }
+
+            return new double[]{pop(stack)};
         }
 
         /**
@@ -313,9 +378,49 @@ public class Equation {
             return null;
         }
 
+        protected double nativeFnInvoke(Instruction i, ArrayList<Double> stack) {
+            switch ((String) i.arg) {
+                case "SIN":
+                    return Math.sin(pop(stack));
+                case "COS":
+                    return Math.cos(pop(stack));
+                case "TAN":
+                    return Math.tan(pop(stack));
+                case "ASIN":
+                    return Math.asin(pop(stack));
+                case "ACOS":
+                    return Math.acos(pop(stack));
+                case "ATAN":
+                    return Math.atan(pop(stack));
+                case "SINH":
+                    return Math.sinh(pop(stack));
+                case "COSH":
+                    return Math.cosh(pop(stack));
+                case "TANH":
+                    return Math.tanh(pop(stack));
+                case "LN":
+                    return Math.log(pop(stack));
+                case "LOG":
+                    return Math.log10(pop(stack));
+                case "SQRT":
+                    return Math.sqrt(pop(stack));
+                case "CBRT":
+                    return Math.cbrt(pop(stack));
+                case "FLOOR":
+                    return Math.floor(pop(stack));
+                case "CEIL":
+                    return Math.ceil(pop(stack));
+                case "ROUND":
+                    return Math.round(pop(stack));
+                default:
+                    throw new UnsupportedOperationException(
+                            "Attempted to call unknown native function " + i.arg);
+            }
+        }
+
         /**
          * Compares the precedence of two basic operators
-         * 
+         *
          * @param lower The operator that is expected to be lower
          * @param higher The operator that is expected to be higher
          * @return Whether lower has a lower precedence than higher
@@ -325,6 +430,14 @@ public class Equation {
             if (higher == '+' || higher == '-') return false;
             // * and / are only higher precedence than + or -
             else return (lower == '+' || lower == '-');
+        }
+
+        private static double pop(ArrayList<Double> arr) {
+            return arr.remove(arr.size() - 1);
+        }
+
+        private static void push(ArrayList<Double> arr, double n) {
+            arr.add(n);
         }
     }
 }
