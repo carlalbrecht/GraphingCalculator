@@ -4,9 +4,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Equation {
+    private Expression rhs;
+
     public Equation(String rawEquation) throws InvalidParameterException {
         rawEquation = rawEquation.replaceAll(" ", "");
         String[] equationParts = rawEquation.split("=");
@@ -15,10 +18,10 @@ public class Equation {
             throw new InvalidParameterException(
                     "Equation must not contain multiple equalities");
 
-        if (equationParts.length == 1)
+        if (rawEquation.indexOf("=") == -1)
             // We assume that if no equality is specified, that the entire
             // expression is equal to y
-            equationParts = new String[]{"y", equationParts[0]};
+            this.rhs = new Expression(rawEquation);
         else {
             // If an equality is specified, we need to make sure that the
             // equation is expressed in terms of y, so that the evaluate()
@@ -41,7 +44,10 @@ public class Equation {
      * @return Array of roots - each root is either a valid number, or NaN
      */
     public double[] evaluate(double x) {
-        return new double[]{Math.sin(x)};
+        Map<String, Double> args = new HashMap<>();
+        args.put("x", x);
+
+        return this.rhs.evaluate(args);
     }
 
     /**
@@ -299,7 +305,7 @@ public class Equation {
                 }
 
                 // Handle operators and operator precedence
-                if (r == '+' || r == '-' || r == '/' || r == '*') {
+                if (r == '+' || r == '-' || r == '/' || r == '*' || r == '^') {
                     lastCharWasOper = true;
 
                     if (opStack.isEmpty()) {
@@ -373,6 +379,8 @@ public class Equation {
                 return new Instruction(Instruction.InstType.NATIVEFUNC, "CEIL");
             } else if (substr.startsWith("round(")) {
                 return new Instruction(Instruction.InstType.NATIVEFUNC, "ROUND");
+            } else if (substr.startsWith("abs(")) {
+                return new Instruction(Instruction.InstType.NATIVEFUNC, "ABS");
             }
 
             return null;
@@ -412,6 +420,11 @@ public class Equation {
                     return Math.ceil(pop(stack));
                 case "ROUND":
                     return Math.round(pop(stack));
+                case "ABS":
+                    return Math.abs(pop(stack));
+                case "POW":
+                    double d1 = pop(stack), d2 = pop(stack);
+                    return Math.pow(d2, d1);
                 default:
                     throw new UnsupportedOperationException(
                             "Attempted to call unknown native function " + i.arg);
@@ -428,6 +441,8 @@ public class Equation {
         protected static boolean higherPrecedence(char lower, char higher) {
             // Nothing has lower precedence than + or -
             if (higher == '+' || higher == '-') return false;
+            // Power operator has highest precedence
+            if (higher == '^' && lower != '^') return true;
             // * and / are only higher precedence than + or -
             else return (lower == '+' || lower == '-');
         }
@@ -490,6 +505,8 @@ class Instruction {
                 return new Instruction(InstType.DIV, null);
             case '*':
                 return new Instruction(InstType.MUL, null);
+            case '^':
+                return new Instruction(InstType.NATIVEFUNC, "POW");
             default:
                 return null;
         }

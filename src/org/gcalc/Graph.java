@@ -38,7 +38,7 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
         this.addComponentListener(this);
 
         // DEBUG
-        this.equations.add(new Equation("sin(x)"));
+        this.equations.add(new Equation("sqrt(4 - x^2)"));
     }
 
     @Override
