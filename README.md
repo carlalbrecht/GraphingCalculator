@@ -7,5 +7,5 @@ fully-featured graphing tool would, but it does some things right.
 ![Demo picture](https://raw.githubusercontent.com/invlpg/GraphingCalculator/master/demo.png)
 
 <p align=center>
-  _A cluttered demonstration of some of the capabilities of the program_
+  <i>A cluttered demonstration of some of the capabilities of the program</i>
 </p>
