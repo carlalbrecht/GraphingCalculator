@@ -1,5 +1,9 @@
 package org.gcalc;
 
+/**
+ * Used to receive raw events from an equation editor. Usually, using an
+ * `EquationListener` is preferable, as it is a higher-level interface.
+ */
 public interface EquationEditorListener {
     /**
      * Signals to a listener that an EquationEditor's equation field has been

@@ -1,5 +1,11 @@
 package org.gcalc;
 
+/**
+ * Contains event triggers for any equation in a list of equations is modified
+ * in any way. Designed as an efficient interface between the Sidebar and a
+ * Graph, but in reality, can be used as an interface between any list of
+ * equations and a Graph.
+ */
 public interface EquationListener {
     /**
      * Signals that a new equation has been created. A reference to the new

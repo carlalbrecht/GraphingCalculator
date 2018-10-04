@@ -7,10 +7,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A superset of the contained Expression class, which can handle equalities.
+ * Attempts to algebraically simplify the Equation when it is constructed, so
+ * that as little variables as possible are needed to evaluate the equation.
+ */
 public class Equation {
     private Expression rhs;
     boolean isEmpty;
 
+    /**
+     * Parses either an expression (no = in the string) or an equation, and
+     * produces an intermediate representation which can be easily evaluated.
+     *
+     * @param rawEquation String representing the expression or equation
+     * @throws InvalidParameterException if the equation is malformed
+     */
     public Equation(String rawEquation) throws InvalidParameterException {
         rawEquation = rawEquation.replaceAll(" ", "");
         if (rawEquation.isEmpty()) {
@@ -81,11 +93,29 @@ public class Equation {
         return null;
     }
 
+    /**
+     * Simple subset of the Equation type, which cannot contain equalities.
+     * Expressions can be evaluated, however, by supplying values for any
+     * variables in the expression.
+     */
     public static class Expression {
+        /**
+         * String which was passed to the constructor
+         */
         protected String rawExpression;
 
+        /**
+         * Operation stack which is executed sequentially, and nested Expressions
+         * called recursively, when the Expression is evaluated
+         */
         protected ArrayList<Instruction> ops = new ArrayList<>();
 
+        /**
+         * Creates a parsed Expression which is prepared for evaluation.
+         *
+         * @param rawExpression String representing the expression to parse
+         * @throws InvalidParameterException if the expression is malformed
+         */
         public Expression(String rawExpression) throws InvalidParameterException {
             this.rawExpression = rawExpression
                     .replaceAll(" ", "")        // Eases parsing by removing whitespace
@@ -97,6 +127,12 @@ public class Equation {
             this.parseRecursive();
         }
 
+        /**
+         * Unwinds the operation stack recursively to help debug expression
+         * parsing.
+         *
+         * @return String representation of an Expression's call stack
+         */
         @Override
         public String toString() {
             String ret = "Expression \"" + this.rawExpression + "\" {\n";
@@ -209,7 +245,10 @@ public class Equation {
 
         /**
          * Recursively parses this.rawExpression, creating new Expressions for
-         * each bracketed region.
+         * each bracketed region. Ensures that the rules of operator precedence
+         * are obeyed, and allows for some algebraic shorthand (such as 2x
+         * resulting in 2*x with a higher operator precedence than anything
+         * else).
          */
         protected void parseRecursive() {
             // Use a shorter name, since we use this value everywhere
@@ -362,6 +401,13 @@ public class Equation {
             }
         }
 
+        /**
+         * Looks from the current string parsing cursor forward to determine if
+         * the parsed substring starts with a function call (e.g. "sin(")
+         *
+         * @param substr The rest of the string from the cursor onwards
+         * @return A `NATIVEFUNC` instruction if appropriate, else `null`
+         */
         protected Instruction nativeFnLookahead(String substr) {
             // Basically just check if the lookahead string starts with a
             // supported function. This _could_ be expressed as a mapping
@@ -405,6 +451,15 @@ public class Equation {
             return null;
         }
 
+        /**
+         * Determines what kind of function a `NATIVEFUNC` instruction refers
+         * to, and how many operands are required, then calls the function.
+         *
+         * @param i The currently executing instruction
+         * @param stack The value stack for the current evaluation
+         * @return The result of the evaluation (i.e. stack operands are popped,
+         *         but the result is not pushed back)
+         */
         protected double nativeFnInvoke(Instruction i, ArrayList<Double> stack) {
             switch ((String) i.arg) {
                 case "SIN":
@@ -466,10 +521,25 @@ public class Equation {
             else return (lower == '+' || lower == '-');
         }
 
+        /**
+         * Convenience function to remove the last element from an ArrayList
+         * and return the removed value.
+         *
+         * @param arr The ArrayList to pop a value from
+         * @return The value popped
+         */
         private static double pop(ArrayList<Double> arr) {
             return arr.remove(arr.size() - 1);
         }
 
+        /**
+         * Convenience function to add an element to an ArrayList. This form is
+         * actually longer than `[list].add()`, but it keeps the stack metaphor
+         * consistent.
+         *
+         * @param arr The stack to add a value to
+         * @param n The value to add
+         */
         private static void push(ArrayList<Double> arr, double n) {
             arr.add(n);
         }
@@ -478,8 +548,15 @@ public class Equation {
 
 /**
  * For internal use by Equation.Expression. Don't use this manually.
+ *
+ * Acts as a structure which stores the type of the instruction, as well as any
+ * optional operands. Due to the use of a stack machine approach to evaluating
+ * instructions, most instructions do not have any operands.
  */
 class Instruction {
+    /**
+     * All supported operation types.
+     */
     public enum InstType {
         // No args
         ADD, SUB, MUL, DIV, FACT, PLUSMINUS,
@@ -493,7 +570,14 @@ class Instruction {
         PUSHVAR
     }
 
+    /**
+     * The type of instruction (i.e. what it will do)
+     */
     public InstType instruction;
+
+    /**
+     * An optional argument, or null
+     */
     public Object arg;
 
     /**

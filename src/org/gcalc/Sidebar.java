@@ -6,6 +6,14 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
+/**
+ * Contains a list of `EquationEditors`. Manages the creation, destruction and
+ * forward of events from each equation editor. Ensures that ids are sequential,
+ * unique, and updated when editors are created or deleted.
+ *
+ * `EquationListeners` can attach to this to receive high-level events when any
+ * of the contained equations are updated.
+ */
 public class Sidebar extends JScrollPane implements ComponentListener, EquationEditorListener {
     private ArrayList<EquationListener> listeners = new ArrayList<>();
     private ArrayList<EquationEditor> editors = new ArrayList<>();
@@ -14,6 +22,12 @@ public class Sidebar extends JScrollPane implements ComponentListener, EquationE
 
     JPanel container;
 
+    /**
+     * Creates a new sidebar component which acts like a Swing component.
+     *
+     * @param width The initial width to use
+     * @param height The initial height to use
+     */
     public Sidebar(int width, int height) {
         super(new JPanel());
         this.setPreferredSize(new Dimension(width, height));
@@ -34,11 +48,21 @@ public class Sidebar extends JScrollPane implements ComponentListener, EquationE
         this.addComponentListener(this);
     }
 
+    /**
+     * Since some layouts are more stubborn, we have to be explicit.
+     *
+     * @return The size we actually want to be
+     */
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(this.width, this.height);
     }
 
+    /**
+     * Resize all equation editors when we are resized.
+     *
+     * @param componentEvent The event passed by Swing; unused
+     */
     public void componentResized(ComponentEvent componentEvent) {
         Dimension size = this.getViewport().getSize();
         this.container.setMaximumSize(new Dimension(size.width, Integer.MAX_VALUE));

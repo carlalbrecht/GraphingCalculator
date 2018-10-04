@@ -20,6 +20,9 @@ package org.gcalc;
  * "Appropriated" code from the apache-commons-math library. Anyway, see the
  * above copyright notice that I took from
  * https://git1-us-west.apache.org/repos/asf?p=commons-math.git;a=blob_plain;f=src/main/java/org/apache/commons/math4/special/Gamma.java;hb=refs/heads/master
+ *
+ * This code is almost entirely not mine, but to implement this myself would've
+ * taken forever.
  */
 public class Factorial {
     /**

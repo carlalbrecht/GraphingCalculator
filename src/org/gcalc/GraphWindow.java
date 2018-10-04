@@ -10,6 +10,11 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Main class of the standalone program, but can also be used in other programs.
+ * Instantiating this class will create a new window containing a graph and an
+ * equation editor sidebar.
+ */
 public class GraphWindow extends JFrame implements ActionListener {
     private JMenuBar menuBar;
     private Graph graph;
@@ -17,6 +22,11 @@ public class GraphWindow extends JFrame implements ActionListener {
 
     private JMenuItem createNew, deleteAll, zoomIn, zoomOut, zoomReset;
 
+    /**
+     * Creates a new window to display and edit equations.
+     *
+     * @throws Exception if anything went wrong /shrug
+     */
     public GraphWindow() throws Exception {
         // Try to set Darcula as UI theme. Otherwise, we'll just use the default
         try {
@@ -58,6 +68,11 @@ public class GraphWindow extends JFrame implements ActionListener {
         this.setVisible(true);
     }
 
+    /**
+     * Contains repetitive code to populate the menubar with items.
+     *
+     * @param menubar The Swing menubar instance to add everything to
+     */
     private void createMenuBar(JMenuBar menubar) {
         /*
          * Expressions menu
@@ -120,6 +135,13 @@ public class GraphWindow extends JFrame implements ActionListener {
         viewMenu.add(this.zoomReset);
     }
 
+    /**
+     * Called in this case when a menubar item has been triggered, either by
+     * clicking on it directly, or via keyboard shortcut.
+     *
+     * @param actionEvent The event supplied by Swing, used to determine which
+     *                    menubar item was clicked
+     */
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
 
@@ -136,6 +158,13 @@ public class GraphWindow extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Program entrypoint. Simply creates a `GraphWindow` instance. Failing
+     * that, the exception thrown is printed, then the program terminated
+     * with an error code.
+     *
+     * @param args Unused. Don't even try.
+     */
     public static void main(String[] args) {
         try {
             // Create root window instance, or just give up

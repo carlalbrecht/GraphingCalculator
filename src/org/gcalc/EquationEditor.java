@@ -10,6 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * Sidebar equation editor for an individual equation. Signals to listeners
+ * (typically the Sidebar) when the expression contained within is updated, or
+ * the editor deleted.
+ */
 public class EquationEditor extends JPanel implements AncestorListener, ActionListener {
     private int id, width;
     private boolean idSet = false;
@@ -25,6 +30,13 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
 
     private Equation equation = new Equation("");
 
+    /**
+     * Creates a new EquationEditor, which functions as a Swing component. The
+     * id should be sequential and unique, as it is what is passed to callback
+     * interface methods.
+     *
+     * @param id The unique equation id
+     */
     public EquationEditor(int id) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -71,6 +83,15 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
         this.setID(id);
     }
 
+    /**
+     * Called when the equation editor is first added by Swing internally to
+     * its container component. This callback steals the keyboard focus and
+     * gives it to the JTextField contained within this equation editor. This
+     * means that the user does not have to click on the text field themselves
+     * after creating a new equation.
+     *
+     * @param ancestorEvent The event supplied to us by Swing
+     */
     @Override
     public void ancestorAdded(AncestorEvent ancestorEvent) {
         final AncestorListener a = this;
@@ -90,6 +111,12 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
     @Override
     public void ancestorMoved(AncestorEvent ancestorEvent) { }
 
+    /**
+     * Listens for click events on any child components of the equation editor.
+     *
+     * @param actionEvent The event supplied by Swing, used to determine which
+     *                    component was clicked
+     */
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
 
@@ -132,10 +159,21 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
         this.repaint();
     }
 
+    /**
+     * Gets the ID of the equation contained within this editor.
+     *
+     * @return The aforementioned ID
+     */
     public int getID() {
         return this.id;
     }
 
+    /**
+     * Sets the width of the equation editor. Usually called when the parent is
+     * resized.
+     *
+     * @param width The new maximum width of the editor
+     */
     public void setWidth(int width) {
         this.width = width;
         this.setPreferredSize(new Dimension(width, 92));
@@ -146,6 +184,11 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
         this.repaint();
     }
 
+    /**
+     * Adds a new target for edit and removal event callbacks.
+     *
+     * @param listener The new event listener instance
+     */
     public void addEquationEditorListener(EquationEditorListener listener) {
         this.listeners.add(listener);
     }
@@ -176,6 +219,10 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
         return this.equation;
     }
 
+    /**
+     * Triggers the removal of the equation from the UI, and the callback of
+     * the `equationRemoved` callback.
+     */
     public void delete() {
         for (EquationEditorListener l : this.listeners) {
             l.equationRemoved(this.id);
@@ -203,6 +250,10 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
         }
     }
 
+    /**
+     * Convenience function to darken the background colours of all child
+     * components.
+     */
     private void darkenAllComponents() {
         darkenComponent(this);
         darkenComponent(this.titleRow);
@@ -211,6 +262,10 @@ public class EquationEditor extends JPanel implements AncestorListener, ActionLi
         darkenComponent(this.deleteBtn);
     }
 
+    /**
+     * Convenience function to lighten the background colours of all child
+     * components.
+     */
     private void lightenAllComponents() {
         lightenComponent(this);
         lightenComponent(this.titleRow);

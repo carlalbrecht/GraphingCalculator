@@ -10,7 +10,28 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+/**
+ * Draws equations which are supplied through `EquationListener` events.
+ *
+ * Currently supports:
+ *  - Multiple equations
+ *  - Discontinuous functions
+ *  - Adding / removing equations
+ *  - Adjusting zoom level
+ *
+ *  TODO:
+ *   - Translation (i.e. dragging around to move away from the origin)
+ *   - Fixing inf -> -inf and vice-versa transitions resulting in a vertical
+ *     line being drawn.
+ *   - Evaluation of functions with multiple roots (i.e. handling multiple
+ *     return values)
+ */
 public class Graph extends JLabel implements ComponentListener, EquationListener {
+    /**
+     * List of colours which will be used to draw lines. The colour used loops
+     * around to the start again if there are more than lineColours.length
+     * lines on the graph.
+     */
     public static final Color[] lineColours = {
             new Color(231, 76, 60),
             new Color(26, 188, 156),
@@ -21,6 +42,9 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
             new Color(255, 0, 255)
     };
 
+    /**
+     * The pixel distance between integer values on each axis at 100% zoom.
+     */
     protected static final int normInterval = 50;
 
     private int width, height;
@@ -29,6 +53,14 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
     private ArrayList<Equation> equations = new ArrayList<>();
     private ArrayList<EquationEditor> editors = new ArrayList<>();
 
+    /**
+     * Creates a new Graph Swing component, which integrates fully with the
+     * Swing layout model. Note that the graph starts out with no lines except
+     * for the grid.
+     *
+     * @param width The initial width of the graph
+     * @param height The initial height of the graph
+     */
     public Graph(int width, int height) {
         this.width = width;
         this.height = height;
@@ -39,11 +71,21 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
         this.addComponentListener(this);
     }
 
+    /**
+     * Fixes stubbornness with some layout managers.
+     *
+     * @return The width and height that we'd _actually_ like to be
+     */
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(this.width, this.height);
     }
 
+    /**
+     * Resize the render image and redraw when the component is resized.
+     *
+     * @param e Unused (supplied by Swing)
+     */
     public void componentResized(ComponentEvent e) {
         Dimension size = this.getSize();
         this.width = size.width;
@@ -106,7 +148,7 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
     }
 
     /**
-     * Zooms out the graph a bit
+     * Zooms out the graph a bit.
      */
     public void decreaseScale() {
         this.setScale(this.getScale() / 1.5);
