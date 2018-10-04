@@ -125,6 +125,8 @@ public class GraphWindow extends JFrame implements ActionListener {
 
         if (source.equals(this.createNew)) {
             this.sidebar.newEquation();
+        } else if (source.equals(this.deleteAll)) {
+            this.sidebar.deleteAllEquations();
         } else if (source.equals(this.zoomIn)) {
             this.graph.increaseScale();
         } else if (source.equals(this.zoomOut)) {

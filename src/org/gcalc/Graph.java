@@ -81,7 +81,9 @@ public class Graph extends JLabel implements ComponentListener, EquationListener
      * @param id The array index of the removed equation
      */
     public void equationRemoved(int id) {
-
+        this.equations.remove(id);
+        this.editors.remove(id);
+        this.redraw();
     }
 
     /**

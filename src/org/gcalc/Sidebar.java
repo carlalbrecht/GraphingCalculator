@@ -67,6 +67,40 @@ public class Sidebar extends JScrollPane implements ComponentListener, EquationE
     }
 
     /**
+     * Signals to a listener that an EquationEditor's delete button has been
+     * pushed, or the EquationEditor's delete() method has been called.
+     *
+     * @param id The id of the removed EquationEditor
+     */
+    public void equationRemoved(int id) {
+        // Remove equation editor fron UI
+        this.container.remove(this.editors.get(id));
+        this.editors.remove(id);
+
+        // Update IDs of all equation editors
+        int newID = 0;
+        for (EquationEditor e : this.editors) {
+            e.setID(newID);
+            newID++;
+        }
+
+        // Notify listeners that the equation has been removed
+        for (EquationListener l : this.listeners) {
+            l.equationRemoved(id);
+        }
+
+        // Update width of all equation editors
+        int width = this.getViewport().getSize().width;
+        for (EquationEditor f : this.editors) {
+            f.setWidth(width);
+        }
+
+        // Redraw sidebar
+        this.revalidate();
+        this.repaint();
+    }
+
+    /**
      * Triggers the creation of a new, blank equation, and the callback of all
      * EquationListeners once the equation has been created
      */
@@ -90,6 +124,15 @@ public class Sidebar extends JScrollPane implements ComponentListener, EquationE
         // Notify listeners that a new equation has been added
         for (EquationListener l : this.listeners) {
             l.equationAdded(id, new Equation(""), e);
+        }
+    }
+
+    /**
+     * Removes each equation in sequence.
+     */
+    public void deleteAllEquations() {
+        for (int i = this.editors.size() - 1; i >= 0; i--) {
+            this.editors.get(i).delete();
         }
     }
 

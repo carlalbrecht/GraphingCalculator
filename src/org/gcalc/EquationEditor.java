@@ -6,12 +6,16 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EquationEditor extends JPanel implements AncestorListener {
+public class EquationEditor extends JPanel implements AncestorListener, ActionListener {
     private int id, width;
+    private boolean idSet = false;
 
     private JLabel title;
+    private JPanel titleRow, buttonRow;
     private JButton deleteBtn;
     private JTextField editor;
 
@@ -22,17 +26,14 @@ public class EquationEditor extends JPanel implements AncestorListener {
     private Equation equation = new Equation("");
 
     public EquationEditor(int id) {
-        this.id = id;
-
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         // Create editor title
-        JPanel titleRow = new JPanel();
-        titleRow.setLayout(new FlowLayout(FlowLayout.LEFT));
-        this.title = new JLabel("Expression " + Integer.toString(id + 1));
-        this.title.setForeground(Graph.lineColours[id % Graph.lineColours.length]);
-        titleRow.add(this.title);
-        this.add(titleRow);
+        this.titleRow = new JPanel();
+        this.titleRow.setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.title = new JLabel();
+        this.titleRow.add(this.title);
+        this.add(this.titleRow);
 
         // Create expression editor
         this.editor = new JTextField();
@@ -57,33 +58,17 @@ public class EquationEditor extends JPanel implements AncestorListener {
         this.editor.addAncestorListener(this);
 
         // Line up buttons on bottom row
-        JPanel buttonRow = new JPanel();
-        buttonRow.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        this.buttonRow = new JPanel();
+        this.buttonRow.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         // Create button to remove the expression
         this.deleteBtn = new JButton("Delete");
-        buttonRow.add(this.deleteBtn);
+        this.deleteBtn.addActionListener(this);
+        this.buttonRow.add(this.deleteBtn);
 
-        this.add(buttonRow);
+        this.add(this.buttonRow);
 
-        // Make odd rows darker
-        if (id % 2 == 1) {
-            darkenComponent(this);
-            darkenComponent(titleRow);
-            darkenComponent(this.title);
-            darkenComponent(this.editor);
-            darkenComponent(buttonRow);
-            darkenComponent(this.deleteBtn);
-        } else {
-            lightenComponent(this);
-            lightenComponent(titleRow);
-            lightenComponent(this.title);
-            lightenComponent(this.editor);
-            lightenComponent(buttonRow);
-            lightenComponent(this.deleteBtn);
-        }
-
-        this.editorNormalColor = this.editor.getBackground();
+        this.setID(id);
     }
 
     @Override
@@ -104,6 +89,48 @@ public class EquationEditor extends JPanel implements AncestorListener {
 
     @Override
     public void ancestorMoved(AncestorEvent ancestorEvent) { }
+
+    public void actionPerformed(ActionEvent actionEvent) {
+        Object source = actionEvent.getSource();
+
+        if (source.equals(this.deleteBtn)) {
+            this.delete();
+        }
+    }
+
+    /**
+     * This is usually called when an EquationEditor has been deleted. It
+     * updates the editor's colour and title.
+     *
+     * @param newID The new ID to use
+     */
+    public void setID(int newID) {
+        if (this.idSet) {
+            if (this.id % 2 == 1 && newID % 2 == 0) {
+                this.lightenAllComponents();
+                this.lightenAllComponents();
+            } else if (this.id % 2 == 0 && newID % 2 == 1) {
+                this.darkenAllComponents();
+                this.darkenAllComponents();
+            }
+        } else {
+            if (newID % 2 == 0) {
+                this.lightenAllComponents();
+            } else {
+                this.darkenAllComponents();
+            }
+        }
+
+        this.editorNormalColor = this.editor.getBackground();
+
+        this.id = newID;
+        this.idSet = true;
+
+        this.title.setText("Expression " + Integer.toString(newID + 1));
+        this.title.setForeground(Graph.lineColours[newID % Graph.lineColours.length]);
+
+        this.repaint();
+    }
 
     public int getID() {
         return this.id;
@@ -149,6 +176,12 @@ public class EquationEditor extends JPanel implements AncestorListener {
         return this.equation;
     }
 
+    public void delete() {
+        for (EquationEditorListener l : this.listeners) {
+            l.equationRemoved(this.id);
+        }
+    }
+
     /**
      * Triggers processing of a new equation when the equation field is
      * modified.
@@ -170,40 +203,52 @@ public class EquationEditor extends JPanel implements AncestorListener {
         }
     }
 
+    private void darkenAllComponents() {
+        darkenComponent(this);
+        darkenComponent(this.titleRow);
+        darkenComponent(this.editor);
+        darkenComponent(this.buttonRow);
+        darkenComponent(this.deleteBtn);
+    }
+
+    private void lightenAllComponents() {
+        lightenComponent(this);
+        lightenComponent(this.titleRow);
+        lightenComponent(this.editor);
+        lightenComponent(this.buttonRow);
+        lightenComponent(this.deleteBtn);
+    }
+
     /**
-     * Lowers the background HSB's brightness by 2%.
+     * Lowers the background RGB values by 10.
      *
      * @param c The component to darken
      */
     private void darkenComponent(Component c) {
-        this.hsvDecrease(c, 0.02f);
+        this.hsvDecrease(c, 10);
     }
 
     /**
-     * Raises the background HSB's brightness by 3.5%.
+     * Raises the background's RGB values by 10.
      *
      * @param c The component to lighten
      */
     private void lightenComponent(Component c) {
-        this.hsvDecrease(c, -0.035f);
+        this.hsvDecrease(c, -10);
     }
 
 
     /**
-     * Retrieves a component's current colour, then decreases it's HSB brightness
-     * by hsvPercentage.
+     * Retrieves a component's current colour, then decreases each colour
+     * channel by amount.
      *
      * @param c The component to adjust
-     * @param hsvPercentage The amount to alter the colour brightness by
+     * @param amount The amount to alter the colour brightness by
      */
-    private void hsvDecrease(Component c, float hsvPercentage) {
+    private void hsvDecrease(Component c, int amount) {
         Color origColour = c.getBackground();
-        float[] hsv = Color.RGBtoHSB(
-                origColour.getRed(),
-                origColour.getGreen(),
-                origColour.getBlue(),
-                null);
-        c.setBackground(new Color(
-                Color.HSBtoRGB(hsv[0], hsv[1], hsv[2] - hsvPercentage)));
+        c.setBackground(new Color(origColour.getRed() - amount,
+                                  origColour.getGreen() - amount,
+                                  origColour.getBlue() - amount));
     }
 }

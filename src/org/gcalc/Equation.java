@@ -24,7 +24,7 @@ public class Equation {
             throw new InvalidParameterException(
                     "Equation must not contain multiple equalities");
 
-        if (rawEquation.indexOf("=") == -1)
+        if (!rawEquation.contains("="))
             // We assume that if no equality is specified, that the entire
             // expression is equal to y
             this.rhs = new Expression(rawEquation);

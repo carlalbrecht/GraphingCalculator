@@ -9,4 +9,12 @@ public interface EquationEditorListener {
      * @param equation The string contents of the EquationEditor's JTextField
      */
     void equationEdited(int id, Equation equation);
+
+    /**
+     * Signals to a listener that an EquationEditor's delete button has been
+     * pushed, or the EquationEditor's delete() method has been called.
+     *
+     * @param id The id of the removed EquationEditor
+     */
+    void equationRemoved(int id);
 }
